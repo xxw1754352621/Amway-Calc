@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public final class Calculator {
+public class Calculator {
 
     /**
      * 初始值，默认值是0
