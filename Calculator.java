@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Calculator {
+public final class Calculator {
 
     /**
      * 初始值，默认值是0
@@ -113,7 +113,6 @@ public class Calculator {
             System.out.println("undo后值:" + initNum + "," + "undo前值:" + curTotal);
             return;
         }
-
         // 原始指针
         if (lastOptIndex == -1) {
             lastOptIndex = lastOptList.size() - 1;
@@ -126,37 +125,23 @@ public class Calculator {
             }
             lastOptIndex--;
         }
-        cancelPreOperation(lastTotalList.get(lastOptIndex), lastOptList.get(lastOptIndex), lastOptNumList.get(lastOptIndex));
+        System.out.println("undo后值:" + lastTotalList.get(lastOptIndex) + ",undo前值:" + curTotal + ",undo的操作:" + lastOptList.get(lastOptIndex) + ",undo操作的值:" + lastOptNumList.get(lastOptIndex));
+        curTotal = lastTotalList.get(lastOptIndex);
     }
 
     /**
      * 根据回撤进行重做
      */
     public void redo() {
-        try {
-            if (lastOptIndex > -1) {
-                if (lastOptIndex + 1 == lastTotalList.size() || lastOptIndex + 1 == this.validIndexMax + 1) {
-                    System.out.println("无法再redo!");
-                    return;
-                }
-                lastOptIndex++;
-
-                redoOperation(lastTotalList.get(lastOptIndex), lastOptList.get(lastOptIndex - 1), lastOptNumList.get(lastOptIndex - 1));
-            }
-        } catch (Exception e) {
-            System.out.println("redo异常,lastOptIndex:" + lastOptIndex);
+        if (lastOptIndex == -1 || lastOptIndex + 1 == lastTotalList.size() || lastOptIndex + 1 == this.validIndexMax + 1) {
+            System.out.println("无法再redo!");
+            return;
         }
+        lastOptIndex++;
+        curTotal = lastTotalList.get(lastOptIndex);
+        System.out.println("redo后值:" + curTotal + ",redo前值:" + curTotal + ",redo的操作:" + lastOptList.get(lastOptIndex - 1) + ",redo操作的值:" + lastOptNumList.get(lastOptIndex - 1));
     }
 
-    private void redoOperation(BigDecimal redoTotal, String redoOpt, BigDecimal redoNum) {
-        System.out.println("redo后值:" + redoTotal + ",redo前值:" + curTotal + ",redo的操作:" + redoOpt + ",redo操作的值:" + redoNum);
-        curTotal = redoTotal;
-    }
-
-    private void cancelPreOperation(BigDecimal lastTotal, String lastOpt, BigDecimal lastNum) {
-        System.out.println("undo后值:" + lastTotal + ",undo前值:" + curTotal + ",undo的操作:" + lastOpt + ",undo操作的值:" + lastNum);
-        curTotal = lastTotal;
-    }
 
     /**
      * 进行累计计算
@@ -168,19 +153,17 @@ public class Calculator {
      */
     private BigDecimal calcTwoNum(BigDecimal curTotal, String curOperator, BigDecimal newNum) {
         BigDecimal ret = BigDecimal.ZERO;
-        switch (curOperator) {
-            case "+":
-                ret = curTotal.add(newNum);
-                break;
-            case "-":
-                ret = curTotal.subtract(newNum).setScale(scale, HALF_UP);
-                break;
-            case "*":
-                ret = curTotal.multiply(newNum).setScale(scale, HALF_UP);
-                break;
-            case "/":
-                ret = curTotal.divide(newNum, HALF_UP);
-                break;
+        if ("+".equalsIgnoreCase(curOperator)) {
+            ret = curTotal.add(newNum);
+        }
+        if ("-".equalsIgnoreCase(curOperator)) {
+            ret = curTotal.subtract(newNum).setScale(scale, HALF_UP);
+        }
+        if ("*".equalsIgnoreCase(curOperator)) {
+            ret = curTotal.multiply(newNum).setScale(scale, HALF_UP);
+        }
+        if ("/".equalsIgnoreCase(curOperator)) {
+            ret = curTotal.divide(newNum, HALF_UP);
         }
         System.out.println("正在执行操作：" + curTotal + curOperator + newNum);
         return ret;
