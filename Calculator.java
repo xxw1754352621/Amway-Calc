@@ -55,7 +55,7 @@ public final class Calculator {
      */
     private int scale = 2;
     /**
-     * 默认向上取整
+     * 默认HALF_UP四舍五入
      */
     private final RoundingMode HALF_UP = RoundingMode.HALF_UP;
 
