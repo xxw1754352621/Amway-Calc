@@ -95,7 +95,7 @@ public final class Calculator {
             lastOptList.add(curOperator);
             lastTotalList.add(ret);
         } else {
-            // 处于redo/undo中间过程,覆盖undo/redo操作记录,并记录有效索引最大值
+            //覆盖undo/redo操作记录,并记录有效索引最大值
             this.lastOptIndex++;
             this.validIndexMax = this.lastOptIndex;
             this.lastTotalList.set(this.lastOptIndex, ret);
@@ -110,7 +110,7 @@ public final class Calculator {
      */
     public void undo() {
         if (lastTotalList.size() <= 1) {
-            System.out.println("undo后值:" + initNum + "," + "undo前值:" + curTotal);
+            System.out.println("不能操作undo!!!");
             return;
         }
         // 原始指针
@@ -120,7 +120,7 @@ public final class Calculator {
         // 指针移动
         else {
             if (lastOptIndex - 1 < 0) {
-                System.out.println("无法再undo!");
+                System.out.println("不能操作undo!!!");
                 return;
             }
             lastOptIndex--;
@@ -134,12 +134,13 @@ public final class Calculator {
      */
     public void redo() {
         if (lastOptIndex == -1 || lastOptIndex + 1 == lastTotalList.size() || lastOptIndex + 1 == this.validIndexMax + 1) {
-            System.out.println("无法再redo!");
+            System.out.println("不能操作redo!!!");
             return;
         }
         lastOptIndex++;
+
+        System.out.println("redo后值:" + lastTotalList.get(lastOptIndex) + ",redo前值:" + curTotal + ",redo的操作:" + lastOptList.get(lastOptIndex - 1) + ",redo操作的值:" + lastOptNumList.get(lastOptIndex - 1));
         curTotal = lastTotalList.get(lastOptIndex);
-        System.out.println("redo后值:" + curTotal + ",redo前值:" + curTotal + ",redo的操作:" + lastOptList.get(lastOptIndex - 1) + ",redo操作的值:" + lastOptNumList.get(lastOptIndex - 1));
     }
 
 
